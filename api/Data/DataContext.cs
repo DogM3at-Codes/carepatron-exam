@@ -11,6 +11,7 @@ namespace api.Data
         }
 
         public DbSet<Client> Clients { get; set; }
+        public DbSet<ClientEvent> ClientEvents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
