@@ -1,5 +1,8 @@
-﻿using api.Data;
+﻿using api;
+using api.Data;
+using api.Models;
 using api.Repositories;
+using api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,9 +30,9 @@ services.AddCors(options =>
 services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase(databaseName: "Test"));
 
 services.AddScoped<DataSeeder>();
+services.AddScoped<IClientService, ClientService>();
 services.AddScoped<IClientRepository, ClientRepository>();
-services.AddScoped<IEmailRepository, EmailRepository>();
-services.AddScoped<IDocumentRepository, DocumentRepository>();
+services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
@@ -41,11 +44,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/clients", async (IClientRepository clientRepository) =>
-{
-    return await clientRepository.Get();
-})
-.WithName("get clients");
+app.MapClientApiEndpoints();
 
 app.UseCors();
 
@@ -59,3 +58,5 @@ using (var scope = app.Services.CreateScope())
 
 // run app
 app.Run();
+
+// todo create events and finish unit testing
